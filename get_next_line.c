@@ -6,7 +6,7 @@
 /*   By: ade-la-c <ade-la-c@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/30 15:07:43 by ade-la-c          #+#    #+#             */
-/*   Updated: 2020/02/05 20:47:35 by ade-la-c         ###   ########.fr       */
+/*   Updated: 2020/02/05 21:15:15 by ade-la-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ static char		*ft_crop_line(char **str)
 
 	i = 0;
 	len = 0;
-	s1 = NULL;
+	if (!*str)
+		return (NULL);
 	while (*str[len] && *str[len] != '\n')
 		len++;
 	if (!(s1 = (char *)malloc(sizeof(char) * (len + 1))))
@@ -61,21 +62,20 @@ static char		*ft_separate_line(char *buf, char **str)
 	return (s1);
 }
 
-static int		ft_checker(char **str)
+static int		ft_checker(char *str)
 {
 	size_t		i;
-
-	i = 0;
-	while (str[i])
-	{
+	
+	i = -1;
+	if (!str)
+		return (0);
+	while (str[++i])
 		if (str[i] == '\n')
 		{
 			if (i < ft_strlen(str))
 				return (1);
 			return (0);
 		}
-		i++;
-	}
 	return (-1);
 }
 
@@ -115,7 +115,7 @@ int					main(void)
 		free(line);
 	}
 	printf("%d|%s\n", ret, line);
-	free(line);
+//	free(line);
 	close(fd);
 	return (0);
 }
