@@ -6,7 +6,7 @@
 /*   By: ade-la-c <ade-la-c@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/30 15:07:43 by ade-la-c          #+#    #+#             */
-/*   Updated: 2020/02/05 16:43:51 by ade-la-c         ###   ########.fr       */
+/*   Updated: 2020/02/05 20:47:35 by ade-la-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,16 @@ static char		*ft_crop_line(char **str)
 	while (*str[len] && *str[len] != '\n')
 		len++;
 	if (!(s1 = (char *)malloc(sizeof(char) * (len + 1))))
-		return(NULL);
+		return (NULL);
 	while (i < len)
 	{
 		s1[i] = *str[i];
 		i++;
 	}
 	s1[i] = '\0';
+	*str = ft_substr(*str, len + 1, ft_strlen(*str) - len + 1);
 	return (s1);
 }
-
 
 static char		*ft_separate_line(char *buf, char **str)
 {
@@ -48,7 +48,7 @@ static char		*ft_separate_line(char *buf, char **str)
 	while (buf[len] && buf[len] != '\n')
 		len++;
 	if (!(s1 = (char *)malloc(sizeof(char) * (len + 1))))
-		return(NULL);
+		return (NULL);
 	while (i < len)
 	{
 		s1[i] = buf[i];
@@ -61,37 +61,40 @@ static char		*ft_separate_line(char *buf, char **str)
 	return (s1);
 }
 
-static int		ft_checker(char *str)
+static int		ft_checker(char **str)
 {
-	int		i;
+	size_t		i;
 
-	i = -1;
-	while (str[++i])
+	i = 0;
+	while (str[i])
+	{
 		if (str[i] == '\n')
 		{
-			if (str[++i])
+			if (i < ft_strlen(str))
 				return (1);
 			return (0);
 		}
+		i++;
+	}
 	return (-1);
 }
 
 int				get_next_line(int fd, char **line)
 {
-	static char		*str[OPEN_MAX];
-//	char			*tmp;
+	static char		*str[FD_SIZE];
 	char			buf[BUFFER_SIZE < 0 ? 0 : BUFFER_SIZE + 1];
 	int				i;
 	int				ret;
 
 	i = 0;
+	str[fd] = NULL;
 	if (fd < 0 || fd > OPEN_MAX || !line || !BUFFER_SIZE)
 		return (-1);
 	if (ft_checker(str[fd]) != -1)
 		ft_crop_line(&str[fd]);
 	while ((ret = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
-		buf[ret]  = '\0';
+		buf[ret] = '\0';
 		if (ft_checker(buf) != -1)
 			break ;
 		else
@@ -101,9 +104,7 @@ int				get_next_line(int fd, char **line)
 	return (ret);
 }
 
-#include <stdio.h>
-
-int		main(void)
+int					main(void)
 {
 	int		fd = open("oui.txt", O_RDONLY);
 	char	*line;
