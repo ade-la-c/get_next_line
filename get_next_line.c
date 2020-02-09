@@ -6,7 +6,7 @@
 /*   By: ade-la-c <ade-la-c@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/30 15:07:43 by ade-la-c          #+#    #+#             */
-/*   Updated: 2020/02/05 21:15:15 by ade-la-c         ###   ########.fr       */
+/*   Updated: 2020/02/09 13:42:17 by ade-la-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,18 +78,22 @@ static int		ft_checker(char *str)
 		}
 	return (-1);
 }
-
+/*
 int				get_next_line(int fd, char **line)
 {
 	static char		*str[FD_SIZE];
 	char			buf[BUFFER_SIZE < 0 ? 0 : BUFFER_SIZE + 1];
+	char			*tmp;
 	int				i;
 	int				ret;
 
 	i = 0;
 	str[fd] = NULL;
+	tmp = NULL;
 	if (fd < 0 || fd > OPEN_MAX || !line || !BUFFER_SIZE)
 		return (-1);
+	if (read(fd, buf, BUFFER_SIZE) == 0)
+		return (0);
 	if (ft_checker(str[fd]) != -1)
 		ft_crop_line(&str[fd]);
 	while ((ret = read(fd, buf, BUFFER_SIZE)) > 0)
@@ -98,10 +102,40 @@ int				get_next_line(int fd, char **line)
 		if (ft_checker(buf) != -1)
 			break ;
 		else
-			ft_strjoin(*line, buf);
+			ft_strjoin(tmp, buf);
 	}
 	ft_separate_line(buf, &str[fd]);
-	return (ret);
+	return (1);
+}
+*/
+int				get_next_line(int fd, char **line)
+{
+	static char		*str[FD_SIZE];
+	char			buf[BUFFER_SIZE < 0 ? 0 : BUFFER_SIZE + 1];
+	char			*tmp;
+	int				i;
+	int				ret;
+
+	i = 0;
+	str[fd] = NULL;
+	tmp = NULL;
+	if (fd < 0 || fd > OPEN_MAX || !line || !BUFFER_SIZE)
+		return (-1);
+	if (ft_checker(str[fd]) != -1)
+		ft_crop_line(&str[fd]);
+	while ((ret = read(fd, buf, BUFFER_SIZE)) > 0 && ft_checker(str[fd]) == -1)
+		{
+			ft_strjoin(tmp, str[fd]);
+			if (ft_checker(buf) != -1)
+			{
+				ft_separate_line(buf, &str[fd]);
+				break ;
+			}
+			else
+				ft_strjoin(tmp, buf);
+		}
+	
+	return (1);
 }
 
 int					main(void)
@@ -112,7 +146,7 @@ int					main(void)
 	while ((ret = get_next_line(fd, &line)) == 1)
 	{
 		printf("%d|%s\n", ret, line);
-		free(line);
+//		free(line);
 	}
 	printf("%d|%s\n", ret, line);
 //	free(line);
