@@ -6,7 +6,7 @@
 /*   By: ade-la-c <ade-la-c@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/30 15:07:43 by ade-la-c          #+#    #+#             */
-/*   Updated: 2020/02/09 13:42:17 by ade-la-c         ###   ########.fr       */
+/*   Updated: 2020/02/09 17:27:19 by ade-la-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ static char		*ft_crop_line(char **str)
 		i++;
 	}
 	s1[i] = '\0';
-	*str = ft_substr(*str, len + 1, ft_strlen(*str) - len + 1);
+	if (!(*str = ft_substr(*str, len + 1, ft_strlen(*str) - len + 1)))
+		return (NULL);
 	return (s1);
 }
 
@@ -68,15 +69,15 @@ static int		ft_checker(char *str)
 	
 	i = -1;
 	if (!str)
-		return (0);
+		return (-1);
 	while (str[++i])
 		if (str[i] == '\n')
 		{
 			if (i < ft_strlen(str))
-				return (1);
-			return (0);
+				return (2);
+			return (1);
 		}
-	return (-1);
+	return (0);
 }
 /*
 int				get_next_line(int fd, char **line)
@@ -121,26 +122,29 @@ int				get_next_line(int fd, char **line)
 	tmp = NULL;
 	if (fd < 0 || fd > OPEN_MAX || !line || !BUFFER_SIZE)
 		return (-1);
-	if (ft_checker(str[fd]) != -1)
-		ft_crop_line(&str[fd]);
+	if (ft_checker(str[fd]) < 0)
+	{
+		tmp = ft_crop_line(&str[fd]);
+	}
 	while ((ret = read(fd, buf, BUFFER_SIZE)) > 0 && ft_checker(str[fd]) == -1)
 		{
-			ft_strjoin(tmp, str[fd]);
-			if (ft_checker(buf) != -1)
+			tmp = ft_strjoin(tmp, str[fd]);
+			if (ft_checker(buf) < 0)
 			{
 				ft_separate_line(buf, &str[fd]);
 				break ;
 			}
 			else
-				ft_strjoin(tmp, buf);
+				tmp = ft_strjoin(tmp, buf);
 		}
 	
-	return (1);
+	*line = tmp;
+	return (ret == 0 ? 0 : 1);
 }
 
 int					main(void)
 {
-	int		fd = open("oui.txt", O_RDONLY);
+	int		fd = open("pseudocode", O_RDONLY);
 	char	*line;
 	int		ret;
 	while ((ret = get_next_line(fd, &line)) == 1)

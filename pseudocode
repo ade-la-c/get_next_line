@@ -1,0 +1,71 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    pseudocode                                         :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: ade-la-c <ade-la-c@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2020/02/09 18:24:32 by ade-la-c          #+#    #+#              #
+#    Updated: 2020/02/09 18:53:35 by ade-la-c         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+~~~~~~ G_N_L ~~~~~~
+
+checker {
+	str has '\n' {
+		str keeps going after '\n' = 2
+		str stops at '\n' = 1
+	}
+	str !'\n' = 0
+	!str = -1
+}
+
+
+g_n_l {
+
+	static checker > -1 {
+		static checker = 2 {
+			line = crop_str
+			return (ret)
+			//this crops the 1st part of the static & end of function
+			goto>static checker > -1 (loop)
+		}
+		static checker = 1 {
+			(replace '\n' with '\0')
+			line = join (line & static)
+			free (static)
+			return (ret)
+			//static is joined in empty line & end of function
+			goto>static checker = -1
+		}
+		static checker = 0 {
+			line = join (line & static)
+			free (static)
+			//static is joined in empty line
+			goto>static checker = -1
+		}
+	}
+
+	static checker = -1 {
+		read => buf
+		buf checker = 2 {
+			line = separate_line (buf)
+			return (ret)
+			//this separates buf at newline & stocks the residue in static
+			goto>static checker > -1
+		}
+		buf checker = 1 {
+			(delete '\n')
+			line = buf
+			return (ret)
+			//this happends when line is the same size than BUF_SIZE & end of function
+			goto>g_n_l/static checker = -1
+		}
+		buf checker = 0 {
+			line = join (line & buf)
+			//there is no '\n' so we read again
+			goto>static checker = -1 (loop)
+		}
+	}
+}

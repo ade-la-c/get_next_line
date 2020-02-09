@@ -6,7 +6,7 @@
 /*   By: ade-la-c <ade-la-c@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/30 15:08:45 by ade-la-c          #+#    #+#             */
-/*   Updated: 2020/02/05 21:32:16 by ade-la-c         ###   ########.fr       */
+/*   Updated: 2020/02/09 19:23:41 by ade-la-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 6
+#  define BUFFER_SIZE 10
 # endif
 
 # define FD_SIZE 4096
@@ -26,6 +26,7 @@
 # include <fcntl.h>
 # include <unistd.h>
 # include <limits.h>
+# include <stdio.h>
 
 int			get_next_line(int fd, char **line);
 
