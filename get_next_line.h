@@ -6,7 +6,7 @@
 /*   By: ade-la-c <ade-la-c@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/30 15:08:45 by ade-la-c          #+#    #+#             */
-/*   Updated: 2020/02/09 19:23:41 by ade-la-c         ###   ########.fr       */
+/*   Updated: 2020/02/12 00:34:22 by ade-la-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 10
 # endif
-
-# define FD_SIZE 4096
 
 # include <stdlib.h>
 # include <string.h>

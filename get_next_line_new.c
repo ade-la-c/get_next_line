@@ -6,65 +6,83 @@
 /*   By: ade-la-c <ade-la-c@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/09 17:17:26 by ade-la-c          #+#    #+#             */
-/*   Updated: 2020/02/09 19:28:01 by ade-la-c         ###   ########.fr       */
+/*   Updated: 2020/02/11 15:47:46 by ade-la-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-/*
+
 static int		ft_checker(char *str)
 {
 	size_t		i;
-	
+
 	i = -1;
 	if (!str)
 		return (-1);
 	while (str[++i])
 		if (str[i] == '\n')
 		{
-			if (i < ft_strlen(str))
+			if (i < ft_strlen(str) - 1)
 				return (2);
 			return (1);
 		}
 	return (0);
 }
-*/
-char		*ft_crop_line(char **str)
+
+char			*ft_crop_line(char **str)
 {
-	char		*s1;
+	char	*ret;
+	char	*tmp;
+	int		i;
+	int		len;
+
+	i = 0;
+	len = 0;
+	if (!*str || ft_checker(*str) < 1)
+		return (NULL);
+	while (*str[len] && *str[len] != '\n')
+		len++;
+	if (!(ret = (char *)malloc(sizeof(char) * (len + 1))))
+		return (NULL);
+	ret[len + 1] = '\0';
+	while (i < len)
+	{
+		ret[i] = *str[i];
+		i++;
+	}
+	if (!(tmp = ft_substr(*str, len + 1, ft_strlen(*str) - len - 1)))
+		return (NULL);
+	*str = tmp;
+	return (ret);
+}
+
+char			*ft_crop_line2(char **str, char *buf)
+{
+	char		*ret;
 	int			i;
 	int			len;
 
 	i = 0;
 	len = 0;
-	if (!*str)
+	if (!*str || ft_checker(*str) == 2)
 		return (NULL);
-	while (*str[len] && *str[len] != '\n')
+	while (buf[len] && buf[len] != '\n')
 		len++;
-	if (!(s1 = (char *)malloc(sizeof(char) * (len + 1))))
+	if (!(ret = (char *)malloc(sizeof(char) * (len + 1))))
 		return (NULL);
+	ret[len + 1] = '\0';
 	while (i < len)
 	{
-		s1[i] = *str[i];
+		ret[i] = buf[i];
 		i++;
 	}
-	s1[i] = '\0';
-	if (!(*str = ft_substr(*str, len, ft_strlen(*str) - len)))
+	if (!(*str = ft_substr(buf, len + 1, ft_strlen(buf) - len - 1)))
 		return (NULL);
-	return (s1);
+	return (ret);
 }
 
-int				main(void)
+int				get_next_line(int fd, char **line)
 {
-	char		*line = "12345\n9";
-	char		*str;
-	str = ft_crop_line(&line);
-	printf("%s\n%s\n", str, line);
-}
-/*
-int			get_next_line(int fd, char  **line)
-{
-	
 	static char		*str[FD_SIZE];
 	char			buf[BUFFER_SIZE < 0 ? 0 : BUFFER_SIZE + 1];
 	char			*tmp;
@@ -74,6 +92,7 @@ int			get_next_line(int fd, char  **line)
 	i = 0;
 	ret = 0;
 	str[fd] = NULL;
+	tmp = NULL;
 	if (fd < 0 || fd > OPEN_MAX || !*line || !BUFFER_SIZE)
 		return (-1);
 	while (ft_checker(str[fd]) > -1)
@@ -86,27 +105,32 @@ int			get_next_line(int fd, char  **line)
 		else if (ft_checker(str[fd]) == 1)
 		{
 			ft_crop_line(&str[fd]);
+			tmp = str[fd];
 			return (ret);
 		}
 		else
+		{
+			ft_strjoin(tmp, str[fd]);
+			continue ;
+		}
+		while ((ret = read(fd, buf, BUFFER_SIZE)) > 1 && ft_checker(str[fd]) == -1)
+		{
+			if (ft_checker(buf) == 2)
+			{
+				tmp = ft_crop_line2(&str[fd], buf);
+				return (ret);
+			}
+			else if (ft_checker(buf) == 1)
+			{
+				str[fd] = buf;
+				str[fd] = ft_crop_line(&str[fd]);
+				tmp = ft_strjoin(tmp, buf);
+				return (ret);
+			}
+			else
+				tmp = ft_strjoin(tmp, buf);
+		}
 	}
 	tmp = *line;
 	return (ret);
 }
-
-int					main(void)
-{
-	int		fd = open("oui.txt", O_RDONLY);
-	char	*line;
-	int		ret;
-	while ((ret = get_next_line(fd, &line)) == 1)
-	{
-		printf("%d|%s\n", ret, line);
-//		free(line);
-	}
-	printf("%d|%s\n", ret, line);
-//	free(line);
-	close(fd);
-	return (0);
-}
-*/

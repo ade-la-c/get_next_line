@@ -6,7 +6,7 @@
 /*   By: ade-la-c <ade-la-c@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/03 17:18:52 by ade-la-c          #+#    #+#             */
-/*   Updated: 2020/02/09 15:22:44 by ade-la-c         ###   ########.fr       */
+/*   Updated: 2020/02/12 02:47:27 by ade-la-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,37 +17,38 @@ size_t				ft_strlen(const char *str)
 	int		i;
 
 	i = 0;
-	if (!str)
-		return (0);
-	while (str[i])
+	while (str && str[i])
 		i++;
 	return (i);
 }
 
 char				*ft_strjoin(char *s1, char *s2)
 {
-	char	*str;
-	size_t	i;
-	size_t	j;
+	long int		len;
+	long int		i;
+	long int		j;
+	char			*string;
+	char			s1_new[ft_strlen(s1) + 1];
 
-	i = 0;
-	j = 0;
-	if (!(char *)s1 || !(char *)s2)
-		return (0);
-	if (!(str = malloc(sizeof(char *) * (ft_strlen(s1) + ft_strlen(s2) + 1))))
+	i = -1;
+	j = -1;
+	if (!s1)
+		return (ft_strdup(s2));
+	len = ft_strlen(s1) + ft_strlen(s2);
+	while (s1[++i])
+		s1_new[i] = s1[i];
+	s1_new[i] = '\0';
+	i = -1;
+//	free(s1);
+	string = (char *)malloc(sizeof(char) * (len + 1));
+	if (!string)
 		return (NULL);
-	while (((char *)s1)[i])
-	{
-		str[i] = ((char *)s1)[i];
-		i++;
-	}
-	while (((char *)s2)[j])
-	{
-		str[i + j] = ((char *)s2)[j];
-		j++;
-	}
-	str[i + j] = '\0';
-	return (str);
+	while (++i < (long int)ft_strlen(s1_new))
+		string[i] = s1_new[i];
+	while (++j < (long int)ft_strlen(s2))
+		string[i + j] = s2[j];
+	string[len] = '\0';
+	return (string);
 }
 
 char				*ft_strdup(const char *s1)

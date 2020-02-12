@@ -6,7 +6,7 @@
 /*   By: ade-la-c <ade-la-c@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/30 15:07:43 by ade-la-c          #+#    #+#             */
-/*   Updated: 2020/02/09 17:27:19 by ade-la-c         ###   ########.fr       */
+/*   Updated: 2020/02/12 04:03:20 by ade-la-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ static char		*ft_separate_line(char *buf, char **str)
 static int		ft_checker(char *str)
 {
 	size_t		i;
-	
+
 	i = -1;
 	if (!str)
 		return (-1);
@@ -79,6 +79,7 @@ static int		ft_checker(char *str)
 		}
 	return (0);
 }
+
 /*
 int				get_next_line(int fd, char **line)
 {
@@ -111,7 +112,7 @@ int				get_next_line(int fd, char **line)
 */
 int				get_next_line(int fd, char **line)
 {
-	static char		*str[FD_SIZE];
+	static char		*str[OPEN_MAX];
 	char			buf[BUFFER_SIZE < 0 ? 0 : BUFFER_SIZE + 1];
 	char			*tmp;
 	int				i;
@@ -127,17 +128,16 @@ int				get_next_line(int fd, char **line)
 		tmp = ft_crop_line(&str[fd]);
 	}
 	while ((ret = read(fd, buf, BUFFER_SIZE)) > 0 && ft_checker(str[fd]) == -1)
+	{
+		tmp = ft_strjoin(tmp, str[fd]);
+		if (ft_checker(buf) < 0)
 		{
-			tmp = ft_strjoin(tmp, str[fd]);
-			if (ft_checker(buf) < 0)
-			{
-				ft_separate_line(buf, &str[fd]);
-				break ;
-			}
-			else
-				tmp = ft_strjoin(tmp, buf);
+			ft_separate_line(buf, &str[fd]);
+			break ;
 		}
-	
+		else
+			tmp = ft_strjoin(tmp, buf);
+	}
 	*line = tmp;
 	return (ret == 0 ? 0 : 1);
 }
