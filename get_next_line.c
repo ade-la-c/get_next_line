@@ -6,7 +6,7 @@
 /*   By: ade-la-c <ade-la-c@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 13:36:06 by ade-la-c          #+#    #+#             */
-/*   Updated: 2020/02/15 21:41:08 by ade-la-c         ###   ########.fr       */
+/*   Updated: 2020/02/20 00:16:30 by ade-la-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static int			ft_checker(char *str)
 {
-	size_t			i;
+	int				i;
 
 	i = -1;
 	if (!str)
@@ -32,65 +32,69 @@ static int			ft_checker(char *str)
 static char			*ft_split_at_newline(char **str, char *s2)
 {
 	char			*ret;
-	char			*s1;
 	int				i;
 	int				len;
 
 	i = 0;
 	len = 0;
-	s1 = (char *)*str;
-	//write(1, "x\n", 2);
 	while (s2[len] && s2[len] != '\n')
-		len++;//write(1, "a\n", 2);
+		len++;
 	if (!(ret = (char *)malloc(sizeof(char) * (len + 1))))
-		return (NULL);//write(1, "b\n", 2);
+		return (NULL);
 	ret[len] = '\0';
 	while (i < len)
-	{//write(1, "c\n", 2);
+	{
 		ret[i] = s2[i];
 		i++;
-	}//write(1, "d\n", 2);
-	if (!(s1 = ft_substr(s2, len + 1, ft_strlen(s2) - len - 1)))
-		return (NULL);//write(1, "e\n", 2);
-	*str = s1;//write(1, "f\n", 2);
+	}//printf("~~%s\n", ret);
+	if (!(*str = ft_substr(s2, len + 1, ft_strlen(s2) - len - 1, *str)))
+		return (NULL);
 	return (ret);
+}
+
+static int			ft_free(char *str, int i)
+{
+	free(str);
+	str = NULL;
+	return (i);
 }
 
 int					get_next_line(int fd, char **line)
 {
 	static char		*str[OPEN_MAX];
 	char			buf[BUFFER_SIZE < 0 ? 0 : BUFFER_SIZE + 1];
-	char			*tmp;
 	int				ret;
 
 	ret = 0;
-	tmp = NULL;
-	if (fd < 0 || fd > OPEN_MAX || !line || BUFFER_SIZE < 1)
+	*line = ft_strdup("");
+	if (fd < 0 || fd > OPEN_MAX || !line || BUFFER_SIZE < 1 || read(fd, buf, 0) < 0)
 		return (-1);
 	buf[BUFFER_SIZE] = '\0';
 	if (ft_checker(str[fd]) > 0)
-	{//printf("appel1\n");
-		tmp = ft_split_at_newline(&str[fd], str[fd]);//printf("finappel1\n");
-		*line = tmp;
+	{
+		free(*line);
+		*line = ft_split_at_newline(&str[fd], str[fd]);
 		return (1);
 	}
 	else if (ft_checker(str[fd]) == 0)
 	{
-		tmp = ft_strdup(str[fd]);
+		free(*line);
+		*line = ft_strdup(str[fd]);
 		str[fd] = NULL;
 	}
 	while ((ret = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
+		buf[ret] = '\0';
 		if (ft_checker(buf) > 0)
-		{//printf("appel2\n");
-			tmp = ft_strjoin(tmp, ft_split_at_newline(&str[fd], buf));//printf("finappel2\n");
+		{
+//			free(*line);
+			*line = ft_strjoin(*line, ft_split_at_newline(&str[fd], buf), 1);
 			break ;
 		}
 		else
-			tmp = ft_strjoin(tmp, buf);
+			*line = ft_strjoin(*line, buf, 0);
 	}
-	*line = tmp;
-	return (ret == 0 ? 0 : 1);
+	return (ret == 0 ? ft_free(str[fd], 0) : 1);
 }
 /*
 int					main(void)
@@ -98,14 +102,18 @@ int					main(void)
 	int		fd = open("oui.txt", O_RDONLY);
 	char	*line;
 	int		ret;
+	int		i = 0;
 	while ((ret = get_next_line(fd, &line)) == 1)
 	{
-		printf("%d|%s\n", ret, line);
+		i++;
+		printf("%d %d|%s\n", i, ret, line);
 		free(line);
 	}
-	printf("%d|%s\n", ret, line);
+	printf("%d %d|%s\n", ++i, ret, line);
 	free(line);
 	close(fd);
+//	system("leaks a.out");
+	CHECK
 	return (0);
 }
 */

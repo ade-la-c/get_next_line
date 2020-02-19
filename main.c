@@ -6,7 +6,7 @@
 /*   By: ade-la-c <ade-la-c@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 13:29:52 by ade-la-c          #+#    #+#             */
-/*   Updated: 2020/02/15 20:46:05 by ade-la-c         ###   ########.fr       */
+/*   Updated: 2020/02/17 13:19:20 by ade-la-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,5 +58,5 @@ int		main(int ac, char **av)
 	ret = get_next_line(fd3, &line);
 	printf("line[%d]: %s\n", nb_line, line);
 	free(line);
-	system("leaks a.out");
+//	system("leaks a.out");
 }

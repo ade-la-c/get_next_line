@@ -6,15 +6,15 @@
 /*   By: ade-la-c <ade-la-c@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/03 17:18:52 by ade-la-c          #+#    #+#             */
-/*   Updated: 2020/02/14 15:23:12 by ade-la-c         ###   ########.fr       */
+/*   Updated: 2020/02/19 22:48:29 by ade-la-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t				ft_strlen(const char *str)
+int					ft_strlen(const char *str)
 {
-	int		i;
+	int				i;
 
 	i = 0;
 	while (str && str[i])
@@ -22,46 +22,45 @@ size_t				ft_strlen(const char *str)
 	return (i);
 }
 
-char				*ft_strjoin(char *s1, char *s2)
+char				*ft_strjoin(char *s1, char *s2, int c)
 {
-	long int		len;
 	long int		i;
 	long int		j;
 	char			*string;
-	char			s1_new[ft_strlen(s1) + 1];
+	char			*s1_new;
+	char			*s2_new;
 
 	i = -1;
 	j = -1;
+	c = 0;
 	if (!s1)
 		return (ft_strdup(s2));
-	len = ft_strlen(s1) + ft_strlen(s2);
-	while (s1[++i])
-		s1_new[i] = s1[i];
-	s1_new[i] = '\0';
-	i = -1;
-//	free(s1);
-	string = (char *)malloc(sizeof(char) * (len + 1));
-	if (!string)
+	s1_new = s1;
+	free(s1);
+	s2_new = s2;
+	if (c == 1)
+		free(s2);
+	c = ft_strlen(s1) + ft_strlen(s2);
+	if (!(string = (char *)malloc(sizeof(char) * (c + 1))))
 		return (NULL);
 	while (++i < (long int)ft_strlen(s1_new))
 		string[i] = s1_new[i];
-	while (++j < (long int)ft_strlen(s2))
-		string[i + j] = s2[j];
-	string[len] = '\0';
+	while (++j < (long int)ft_strlen(s2_new))
+		string[i + j] = s2_new[j];
+	string[c] = '\0';
 	return (string);
 }
 
 char				*ft_strdup(const char *s1)
 {
-	int		i;
-	char	*string;
-	int		size;
+	int				i;
+	char			*string;
+	int				size;
 
 	i = 0;
 	size = ft_strlen(s1);
 	string = NULL;
-	string = (char *)malloc(sizeof(char) * (size + 1));
-	if (!string)
+	if (!(string = (char *)malloc(sizeof(char) * (size + 1))))
 		return (NULL);
 	while (s1[i])
 	{
@@ -72,26 +71,23 @@ char				*ft_strdup(const char *s1)
 	return (string);
 }
 
-char				*ft_substr(char *s, unsigned int start, unsigned int len)
+char				*ft_substr(char *s, int start, int len, char *str)
 {
-	char	*string;
-	size_t	i;
+	char			*string;
+	int				i;
 
-	i = 0;
+	i = -1;
 	if (!s)
 		return (NULL);
 	if (start > ft_strlen(s))
 		return (ft_strdup(""));
 	if (start + len > ft_strlen(s))
 		len = ft_strlen(s) - start;
-	string = (char *)malloc(sizeof(char) * (len + 1));
-	if (!string)
+	if (!(string = (char *)malloc(sizeof(char) * (len + 1))))
 		return (NULL);
-	while (i < len)
-	{
+	while (++i < len)
 		string[i] = s[start + i];
-		i++;
-	}
+	free(str);
 	string[i] = '\0';
 	return (string);
 }
