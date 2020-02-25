@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ade-la-c <ade-la-c@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/02/23 13:28:36 by ade-la-c          #+#    #+#             */
-/*   Updated: 2020/02/25 17:21:51 by ade-la-c         ###   ########.fr       */
+/*   Created: 2020/02/11 13:36:06 by ade-la-c          #+#    #+#             */
+/*   Updated: 2020/02/23 15:45:32 by ade-la-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ static int			ft_checker(char *str)
 static char			*ft_split_at_newline(char **str, char *s2)
 {
 	char			*ret;
+//	char			*tmp;
 	int				i;
 	int				len;
 
@@ -44,12 +45,16 @@ static char			*ft_split_at_newline(char **str, char *s2)
 	ret[len] = '\0';
 	while (++i < len)
 		ret[i] = s2[i];
+//	tmp = *str;
+//	free(*str);
+//	printf("%p\n", *str);
 	if (!(*str = ft_substr(s2, len + 1, ft_strlen(s2) - len - 1, *str)))
 		return (NULL);
+//	printf("%p\n", *str);
 	return (ret);
 }
 
-int			ft_free(char *str, int i)
+static int			ft_free(char *str, int i)
 {
 	free(str);
 	str = NULL;
@@ -60,25 +65,26 @@ int					get_next_line(int fd, char **line)
 {
 	static char		*str[OPEN_MAX];
 	char			buf[BUFFER_SIZE < 0 ? 0 : BUFFER_SIZE + 1];
+//	char			*tmp;
 	int				ret;
 
 	ret = 0;
 	*line = ft_strdup("");
-	if (fd < 0 || fd > OPEN_MAX || !line || BUFFER_SIZE < 1
-	|| read(fd, buf, 0) < 0)
+	if (fd < 0 || fd > OPEN_MAX || !line || BUFFER_SIZE < 1 || read(fd, buf, 0) < 0)
 		return (-1);
 	buf[BUFFER_SIZE] = '\0';
 	if (ft_checker(str[fd]) > 0)
 	{
 		free(*line);
 		*line = ft_split_at_newline(&str[fd], str[fd]);
+//		if (ft_checker(str[fd]) == 1)
+//			return (ft_free(str[fd], 1));
 		return (1);
 	}
 	else if (ft_checker(str[fd]) == 0)
 	{
 		free(*line);
 		*line = ft_strdup(str[fd]);
-		free(str[fd]);
 		str[fd] = NULL;
 	}
 	while ((ret = read(fd, buf, BUFFER_SIZE)) > 0)
@@ -92,12 +98,12 @@ int					get_next_line(int fd, char **line)
 		else
 			*line = ft_strjoin(*line, buf, 0);
 	}
-	return (ret == 0 ? 0 : 1);
+	return (ret == 0 ? ft_free(str[fd], 0) : 1);
 }
 
 int					main(void)
 {
-	int		fd = open("42TESTERS-GNL/files/huge_file", O_RDONLY);
+	int		fd = open("oui.txt", O_RDONLY);
 	char	*line;
 	int		ret;
 	int		i = 0;
@@ -110,8 +116,7 @@ int					main(void)
 	printf("%d %d|%s\n", ++i, ret, line);
 	free(line);
 	close(fd);
-	system("leaks a.out");
+//	system("leaks a.out");
 	CHECK
 	return (0);
 }
-

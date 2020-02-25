@@ -6,7 +6,7 @@
 /*   By: ade-la-c <ade-la-c@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/03 17:18:52 by ade-la-c          #+#    #+#             */
-/*   Updated: 2020/02/19 22:48:29 by ade-la-c         ###   ########.fr       */
+/*   Updated: 2020/02/25 17:19:03 by ade-la-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,32 +22,44 @@ int					ft_strlen(const char *str)
 	return (i);
 }
 
-char				*ft_strjoin(char *s1, char *s2, int c)
+char				*ft_strcpy(char *dest, const char *src)
 {
-	long int		i;
-	long int		j;
+	int	i;
+
+	i = -1;
+	if (!src)
+		return (NULL);
+	while (src[++i])
+		dest[i] = src[i];
+	dest[i] = '\0';
+	return (dest);
+}
+
+char				*ft_strjoin(char *s1, char *s2, int b)
+{
+	int				i;
+	int				j;
 	char			*string;
-	char			*s1_new;
-	char			*s2_new;
+	char			s1_new[ft_strlen(s1) + 1];
+	char			s2_new[ft_strlen(s2) + 1];
 
 	i = -1;
 	j = -1;
-	c = 0;
 	if (!s1)
 		return (ft_strdup(s2));
-	s1_new = s1;
+	ft_strcpy(s1_new, s1);
 	free(s1);
-	s2_new = s2;
-	if (c == 1)
+	ft_strcpy(s2_new, s2);
+	if (b == 1)
 		free(s2);
-	c = ft_strlen(s1) + ft_strlen(s2);
-	if (!(string = (char *)malloc(sizeof(char) * (c + 1))))
+	b = ft_strlen(s1_new) + ft_strlen(s2_new);
+	if (!(string = (char *)malloc(sizeof(char) * (b + 1))))
 		return (NULL);
-	while (++i < (long int)ft_strlen(s1_new))
+	while (++i < ft_strlen(s1_new))
 		string[i] = s1_new[i];
-	while (++j < (long int)ft_strlen(s2_new))
+	while (++j < ft_strlen(s2_new))
 		string[i + j] = s2_new[j];
-	string[c] = '\0';
+	string[b] = '\0';
 	return (string);
 }
 
@@ -80,7 +92,11 @@ char				*ft_substr(char *s, int start, int len, char *str)
 	if (!s)
 		return (NULL);
 	if (start > ft_strlen(s))
+	{
+		free(str);
+		str = NULL;
 		return (ft_strdup(""));
+	}
 	if (start + len > ft_strlen(s))
 		len = ft_strlen(s) - start;
 	if (!(string = (char *)malloc(sizeof(char) * (len + 1))))
@@ -88,6 +104,7 @@ char				*ft_substr(char *s, int start, int len, char *str)
 	while (++i < len)
 		string[i] = s[start + i];
 	free(str);
+	str = NULL;
 	string[i] = '\0';
 	return (string);
 }
